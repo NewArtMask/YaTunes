@@ -5,6 +5,10 @@ export const videoPlayerInit = () => {
 	const videoProgress = document.querySelector('.video-progress')
 	const videoTimePassed = document.querySelector('.video-time__passed')
 	const videoTimeTotal = document.querySelector('.video-time__total')
+	const videoVolume = document.querySelector('.video-volume')
+    const videoFullscreen = document.querySelector('.video-fullscreen')
+    const volumeUpMax = document.querySelector('.fa-volume-up')
+    const volumeDownMin = document.querySelector('.fa-volume-down')
 
 	const toggleIcon = () => {
 		if (videoPlayer.paused) {
@@ -16,12 +20,13 @@ export const videoPlayerInit = () => {
 		}
 	}
 
-	const togglePlay = () => {
+	const togglePlay = e => {
 		if (videoPlayer.paused) {
 			videoPlayer.play()
 		} else {
 	 		videoPlayer.pause()
 		}
+		e.preventDefault()
 	}
 
 	const stopPlay = () => {
@@ -32,14 +37,21 @@ export const videoPlayerInit = () => {
 
 	const addZero = n => n < 10 ? '0' + n : n
 
+	const changeValue = () => {
+		const valueVolume = videoVolume.value
+		videoPlayer.volume = valueVolume / 100
+	}
+
+	const videoVolumeChangeToggle = saveVol => volume => {
+		if (volume !== videoPlayer.volume) {
+			[saveVol, videoPlayer.volume] = [videoPlayer.volume, volume]
+		} else videoPlayer.volume = saveVol
+	}
+
+	let videoVolumeChange = videoVolumeChangeToggle()
+
 	videoPlayer.addEventListener('click', togglePlay)
 	videoButtonPlay.addEventListener('click', togglePlay)
-
-	document.addEventListener('keyup', e => {
-  		if (e.code === 'Space') {
-    		togglePlay()
-  		}
-	})
 
 	videoPlayer.addEventListener('play', toggleIcon)
 	videoPlayer.addEventListener('pause', toggleIcon)
@@ -68,4 +80,25 @@ export const videoPlayerInit = () => {
 
 		videoPlayer.currentTime = (value * duration) / 100
 	})
+
+	videoFullscreen.addEventListener('click', () => {
+		videoPlayer.requestFullscreen()
+	})
+
+	document.addEventListener('keyup', e => {
+  		if (e.code === 'Space') {
+    		togglePlay()
+  		}
+	})
+
+	videoPlayer.addEventListener('volumechange', () => {
+		videoVolume.value = Math.round(videoPlayer.volume * 100)
+	})
+
+	volumeUpMax.addEventListener('click', () => { videoVolumeChange(1) })
+	volumeDownMin.addEventListener('click', () => { videoVolumeChange(0) })
+
+	changeValue()
+
+	videoVolume.addEventListener('input', changeValue)
 }
