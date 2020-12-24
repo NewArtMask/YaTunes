@@ -51,4 +51,9 @@ export const radioPlayerInit = () => {
 		}
 		changeIconPlay()
 	})
+
+	return () => {
+		audio.pause()
+		changeIconPlay()
+	}
 }

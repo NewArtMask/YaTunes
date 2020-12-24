@@ -83,16 +83,25 @@ export const videoPlayerInit = () => {
 
 	videoFullscreen.addEventListener('click', () => {
 		videoPlayer.requestFullscreen()
+		videoPlayer.controls = true
 	})
 
-	document.addEventListener('keyup', e => {
+	/*document.addEventListener('keyup', e => {
   		if (e.code === 'Space') {
     		togglePlay()
   		}
-	})
+	})*/
 
 	videoPlayer.addEventListener('volumechange', () => {
 		videoVolume.value = Math.round(videoPlayer.volume * 100)
+	})
+
+	videoPlayer.addEventListener('fullscreenchange', () => {
+		if (document.fullscreen) {
+			videoPlayer.controls = true
+		} else {
+			videoPlayer.controls = false
+		}
 	})
 
 	volumeUpMax.addEventListener('click', () => { videoVolumeChange(1) })
@@ -101,4 +110,9 @@ export const videoPlayerInit = () => {
 	changeValue()
 
 	videoVolume.addEventListener('input', changeValue)
+
+	return () => {
+		videoPlayer.pause()
+		toggleIcon()
+	}
 }
